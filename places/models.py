@@ -8,6 +8,9 @@ class Place(models.Model):
     lat = models.FloatField(verbose_name='широта')
     lon = models.FloatField(verbose_name='долгота')
 
+    def __str__(self):
+        return f'{self.title}'
+
 class Image(models.Model):
     img = models.ImageField(upload_to='images/')
     place = models.ForeignKey(Place, on_delete=models.CASCADE, verbose_name='место', related_name='images')
