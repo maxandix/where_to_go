@@ -21,7 +21,7 @@ def get_place(request, place_id):
             "lat": place.lat
         }
     }
-    for image in place.images.all():
+    for image in place.images.all().order_by('position'):
         data["imgs"].append(image.img.url)
 
     return JsonResponse(
