@@ -23,7 +23,7 @@ from places.views import get_place
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index_page),
-    path('place/<int:place_id>/', get_place),
+    path('place/<int:place_id>/', get_place, name='place-place_details'),
 ]
 
 if settings.DEBUG:
