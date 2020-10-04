@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index_page),
     path('place/<int:place_id>/', get_place, name='place-place_details'),
+    path('tinymce/', include('tinymce.urls')),
 ]
 
 if settings.DEBUG:
