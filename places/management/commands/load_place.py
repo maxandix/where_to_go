@@ -18,24 +18,24 @@ class Command(BaseCommand):
         for url in options['urls']:
             response = requests.get(url)
             response.raise_for_status()
-            data = response.json()
+            payload = response.json()
 
             place, created = Place.objects.get_or_create(
-                title=data['title'],
-                description_short=data['description_short'],
-                description_long=data['description_long'],
-                lat=data['coordinates']['lat'],
-                lon=data['coordinates']['lng'],
+                title=payload['title'],
+                defaults={
+                    'description_short': payload['description_short'],
+                    'description_long': payload['description_long'],
+                    'lat': payload['coordinates']['lat'],
+                    'lon': payload['coordinates']['lng']
+                }
             )
 
-            for index, img_url in enumerate(data['imgs']):
+            for index, img_url in enumerate(payload['imgs']):
                 img_response = requests.get(img_url)
                 img_response.raise_for_status()
                 content_file = ContentFile(img_response.content)
-                new_image = Image()
+                new_image = Image(place=place, position=index)
                 new_image.img.save(parse_img_name(img_url), content_file, save=False)
-                new_image.place = place
-                new_image.position = index
                 new_image.save()
 
             self.stdout.write(self.style.SUCCESS(f'Successfully loaded url "{url}"'))

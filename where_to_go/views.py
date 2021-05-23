@@ -3,7 +3,6 @@ from places.models import Place
 from django.urls import reverse
 
 
-
 def index_page(request):
     places = Place.objects.all()
     features = []
@@ -20,12 +19,12 @@ def index_page(request):
                 "detailsUrl": reverse('place-place_details', kwargs={'place_id': place.id})
             }
         })
-    data = {
+    places_geojson = {
         "type": "FeatureCollection",
         "features": features,
     }
 
     context = {
-        "data": data,
+        "places_geojson": places_geojson,
     }
     return render(request, 'index.html', context)

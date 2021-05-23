@@ -1,7 +1,8 @@
-from django.contrib import admin
-from .models import Place, Image
-from django.utils.html import format_html
 from adminsortable2.admin import SortableInlineAdminMixin
+from django.contrib import admin
+from django.utils.html import format_html
+
+from .models import Place, Image
 
 
 class ImageInline(SortableInlineAdminMixin, admin.TabularInline):
@@ -11,30 +12,28 @@ class ImageInline(SortableInlineAdminMixin, admin.TabularInline):
 
     @staticmethod
     def image_preview(obj):
-        preview_height = 200
-        return format_html('<img src="{url}" width="{width}px" height={height}px />',
-                           url=obj.img.url,
-                           width=obj.img.width / obj.img.height * preview_height,
-                           height=preview_height,
-                           )
+        if obj.img:
+            return format_html('<img src="{url}" height=200px/>',
+                               url=obj.img.url)
+        return format_html('<p>Здесь будет превью, когда вы выберете файл</p>')
 
 
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
-    inlines = [
-        ImageInline,
-    ]
+    inlines = [ImageInline, ]
+    search_fields = ['title']
 
 
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
     readonly_fields = ["image_preview"]
+    raw_id_fields = ["place", ]
+    autocomplete_fields = ["place"]
 
     @staticmethod
     def image_preview(obj):
-        preview_height = 200
-        return format_html('<img src="{url}" width="{width}" height={height} />',
-                           url=obj.img.url,
-                           width=obj.img.width / obj.img.height * preview_height,
-                           height=preview_height,
-                           )
+        if obj.img:
+            return format_html('<img src="{url}" height=200px/>',
+                               url=obj.img.url)
+        return format_html(
+            '<p>Здесь будет превью, когда вы создадите изображение</p>')

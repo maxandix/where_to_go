@@ -1,6 +1,7 @@
-from places.models import Place
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+
+from places.models import Place
 
 JSON_DUMPS_PARAMS = {
     'indent': 2,
@@ -11,7 +12,7 @@ JSON_DUMPS_PARAMS = {
 def get_place(request, place_id):
     place = get_object_or_404(Place, id=place_id)
 
-    data = {
+    context = {
         "title": place.title,
         "imgs": [],
         "description_short": place.description_short,
@@ -22,9 +23,9 @@ def get_place(request, place_id):
         }
     }
     for image in place.images.all().order_by('position'):
-        data["imgs"].append(image.img.url)
+        context["imgs"].append(image.img.url)
 
     return JsonResponse(
-        data,
+        context,
         json_dumps_params=JSON_DUMPS_PARAMS
     )
